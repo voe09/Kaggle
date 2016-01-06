@@ -51,15 +51,16 @@ for(k in pc_num) {
 set.seed(10)
 model <- svm(response ~ ., data = train_PCA.data[, c(1:13, 16)], kernal = 'radial', gamma = 0.09, cost = 2.7, cross = 10)
 
-
 #Read test data
 test_feature.data <- read.csv('test.csv', header = FALSE)
 
 #Manipulate the test features
 test_feature.data <- test_feature.data[,c(15,13,40,37,19,7,30,5,33,29,35,24,8,23,39)]
-test_PCA.data <- data.frame(prcomp(test_feature.data, scale = TRUE)$x)
+test_PCA.data <- data.frame(prcomp(test_feature.data, scale = TRUE)$x)[,c(1:13)]
 test_response.data <- predict(model, newdata = test_PCA.data)
+test_response.data <- as.integer(as.character(test_response.data))
 test_ID <- c(1:9000)
 test.data <- data.frame(cbind(test_ID, test_response.data))
 names(test.data) <- c('Id', 'Solution')
 write.csv(test.data, file = 'solution.csv')
+
