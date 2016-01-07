@@ -35,32 +35,39 @@ for(i in cost_list) {
 
 #Use PCA to reduce dimensions, and use cross-validation to select the number of principle components
 #Thus we choose the first 13 princple components
-train_PCA.data <- data.frame(prcomp(train_filter.data[, c(-16)], scale = TRUE)$x)
-train_PCA.data <- cbind(train_PCA.data, train_response.data)
-train_PCA.data$response <- as.factor(train_PCA.data$response)
-pc_num <- c(1:15)
-for(k in pc_num) {
-    set.seed(100)
-    model <- svm(response ~ ., data = train_PCA.data[, c(1:k, 16)], kernel = 'radial',gamma = 0.09, cost = 2.7, cross = 10)
-    accuracy <- summary(model)$tot.accuracy
-    observation <- c(1, 0.03, k, accuracy)
-    print(observation)
-}
+#train_PCA.data <- data.frame(prcomp(train_filter.data[, c(-16)], scale = TRUE)$x)
+#train_PCA.data <- cbind(train_PCA.data, train_response.data)
+#train_PCA.data$response <- as.factor(train_PCA.data$response)
+#pc_num <- c(1:15)
+#for(k in pc_num) {
+#    set.seed(100)
+#    model <- svm(response ~ ., data = train_PCA.data[, c(1:k, 16)], kernel = 'radial',gamma = 0.09, cost = 2.7, cross = 10)
+#    accuracy <- summary(model)$tot.accuracy
+#     observation <- c(1, 0.03, k, accuracy)
+#     print(observation)
+# }
 
 #At last the model is the following
 set.seed(10)
-model <- svm(response ~ ., data = train_PCA.data[, c(1:13, 16)], kernal = 'radial', gamma = 0.09, cost = 2.7, cross = 10)
+# model <- svm(response ~ ., data = train_PCA.data[, c(1:13, 16)], kernal = 'radial', gamma = 0.09, cost = 2.7, cross = 10)
+model <- svm(response ~ ., data = train_filter.data, kernal = 'radial', gamma = 0.09, cost = 2.7, cross = 10)
+
 
 #Read test data
 test_feature.data <- read.csv('test.csv', header = FALSE)
 
 #Manipulate the test features
 test_feature.data <- test_feature.data[,c(15,13,40,37,19,7,30,5,33,29,35,24,8,23,39)]
-test_PCA.data <- data.frame(prcomp(test_feature.data, scale = TRUE)$x)[,c(1:13)]
-test_response.data <- predict(model, newdata = test_PCA.data)
+#test_PCA.data <- data.frame(prcomp(test_feature.data, scale = TRUE)$x)[,c(1:13)]
+#test_response.data <- predict(model, newdata = test_PCA.data)
+#test_response.data <- as.integer(as.character(test_response.data))
+#test_ID <- c(1:9000)
+#test.data <- data.frame(cbind(test_ID, test_response.data))
+#names(test.data) <- c('Id', 'Solution')
+#write.csv(test.data, file = 'solution.csv')
+test_response.data <- predict(model, newdata = test_feature.data)
 test_response.data <- as.integer(as.character(test_response.data))
 test_ID <- c(1:9000)
 test.data <- data.frame(cbind(test_ID, test_response.data))
 names(test.data) <- c('Id', 'Solution')
 write.csv(test.data, file = 'solution.csv')
-
