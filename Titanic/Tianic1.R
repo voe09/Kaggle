@@ -1,4 +1,8 @@
 
+#add some code for testing
+print(5+4)
+a<-3+5
+
 library(randomForest)
 
 train<- read.csv('train.csv')
