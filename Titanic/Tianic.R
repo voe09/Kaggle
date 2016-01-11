@@ -1,8 +1,4 @@
 
-#Test test test test test test test test
-=======
-
-
 library(randomForest)
 
 train<- read.csv('train.csv')
@@ -18,3 +14,6 @@ try.test[153,5]<- mean(try.test[,5], na.rm = T)
 rf<- randomForest(train.x, train.y,ntree = 500)
 
 rfpredice<- predict(rf, try.test)
+
+
+#Zhu Test test test test test
