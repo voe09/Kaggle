@@ -1,8 +1,8 @@
-<<<<<<< HEAD
-#Test test test test test test
+
+#Test test test test test test test test
 =======
 
->>>>>>> 88d1f0991af3934121c4d0ec3062bf10d1d8c14f
+
 library(randomForest)
 
 train<- read.csv('train.csv')
