@@ -22,10 +22,22 @@ train.data$Title <- factor(train.data$Title)
 train.data$FamilySize <- train.data$SibSp + train.data$Parch + 1
 
 #Find the people in the same family, with the same Surname and concerning the familysize
-train.data$Title <- sapply(train.data$Name, FUN=function(x) {strsplit(x, split='[,.]')[[1]][1]})
+train.data$Surname<- sapply(train.data$Name, FUN=function(x) {strsplit(x, split='[,.]')[[1]][1]})
 train.data$FamilyID <- paste(as.character(train.data$FamilySize), train.data$Surname, sep="")
 train.data$FamilyID[train.data$FamilySize <= 2] <- 'Small'
 famIDs <- data.frame(table(train.data$FamilyID))
 famIDs <- famIDs[famIDs$Freq <= 2,]
 train.data$FamilyID[train.data$FamilyID %in% famIDs$Var1] <- 'Small'
 train.data$FamilyID <- factor(train.data$FamilyID)
+
+#filter rows with NA
+train_without_NA.data <- train.data[!is.na(train.data$Age),]
+
+#select rows with NA
+train_with_NA.data <- train.data[is.na(train.data$Age),]
+
+Title_in_these_missing_rows <- unique(train_with_NA.data$Title)
+
+for (Title in Title_in_these_missing_rows) {
+    train_with_NA.data[train_with_NA.data[['Title']] == Title,]$Age <- mean(train_without_NA.data[train_without_NA.data[['Title']] == Title,]$Age)
+}
