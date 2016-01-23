@@ -46,6 +46,24 @@ fill_in_age_by_title <- function(obs) {
     }else {
         return(obs['Age'])
     }
-}
+}fea
 feature.data$Age <- apply(feature.data, 1, FUN=fill_in_age_by_title)
+feature.data$Age <- as.numeric(feature.data$Age)
+# Weik below
+
+#Select feature
+feature<- c("Pclass","Age","Sex","Fare","FamilySize")
+new.data<- feature.data[,feature]
+
+#Applying RF
+library(randomForest)
+
+train.y<- as.factor(train.data$Survived)
+train.x<- new.data[c(1:nrow(train.data)),]
+
+test<- new.data[-c(1:nrow(train.data)),]
+
+rf<- randomForest(train.x, train.y,ntree = 500)
+
+rfpredice<- predict(rf, try.test)
 
