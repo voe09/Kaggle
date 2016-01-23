@@ -1,3 +1,4 @@
+c<-8+4
 
 library(randomForest)
 
@@ -17,3 +18,5 @@ rfpredice<- predict(rf, try.test)
 
 
 #Zhu Test test test test test
+# say hith nothing happeb
+# SECOND EDIT
