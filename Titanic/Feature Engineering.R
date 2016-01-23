@@ -35,7 +35,6 @@ feature.data$FamilyID <- factor(feature.data$FamilyID)
 
 #Fill in the value of missing data in Fare
 feature.data[is.na(feature.data$Fare),]$Fare <- mean(feature.data[feature.data$Pclass == 3,]$Fare, na.rm = TRUE)
-feature.data$Fare <- log(feature.data$Fare)
 
 #Fill in the value of missing data in Age by Title
 fill_in_age_by_title <- function(obs) {
@@ -46,13 +45,14 @@ fill_in_age_by_title <- function(obs) {
     }else {
         return(obs['Age'])
     }
-}fea
+}
 feature.data$Age <- apply(feature.data, 1, FUN=fill_in_age_by_title)
 feature.data$Age <- as.numeric(feature.data$Age)
+
 # Weik below
 
 #Select feature
-feature<- c("Pclass","Age","Sex","Fare","FamilySize")
+feature<- c("Pclass","Age","Sex","Fare","FamilySize","Embarked")
 new.data<- feature.data[,feature]
 
 #Applying RF
@@ -65,5 +65,5 @@ test<- new.data[-c(1:nrow(train.data)),]
 
 rf<- randomForest(train.x, train.y,ntree = 500)
 
-rfpredice<- predict(rf, try.test)
+rfpredice<- predict(rf, test)
 
