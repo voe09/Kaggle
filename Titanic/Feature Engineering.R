@@ -48,6 +48,8 @@ fill_in_age_by_title <- function(obs) {
 }
 feature.data$Age <- apply(feature.data, 1, FUN=fill_in_age_by_title)
 feature.data$Age <- as.numeric(feature.data$Age)
+
+
 #Extract Cabin Num and deck from Cabin
 feature.data$CabinNum <- sapply(feature.data$Cabin, function(x) strsplit(x, '[A-Z]')[[1]][2])
 feature.data$CabinNum <- as.numeric(feature.data$CabinNum)
@@ -65,21 +67,45 @@ feature.data$CabinLoc[feature.data$CabinNum %% 2 == 0] <- 'left'
 feature.data$CabinLoc[feature.data$CabinNum %% 2 != 0] <- 'right'
 feature.data$CabinLoc <- as.factor(feature.data$CabinLoc)
 
-# # Weik below
-# 
-# #Select feature
-# feature<- c("Pclass","Age","Sex","Fare","FamilySize","Embarked")
-# new.data<- feature.data[,feature]
-# 
-# #Applying RF
-# library(randomForest)
-# 
-# train.y<- as.factor(train.data$Survived)
-# train.x<- new.data[c(1:nrow(train.data)),]
-# 
-# test<- new.data[-c(1:nrow(train.data)),]
-# 
-# rf<- randomForest(train.x, train.y,ntree = 500)
-# 
-# rfpredice<- predict(rf, test)
+# Weik below
+
+#Select feature
+feature<- c("Pclass","Age","Sex","Fare","Parch","SibSp","Embarked","CabinPos","CabinLoc")
+new.data<- feature.data[,feature]
+ 
+#Applying RF
+library(randomForest)
+ 
+train.y<- as.factor(train.data$Survived)
+train.x<- new.data[c(1:nrow(train.data)),]
+test<- new.data[-c(1:nrow(train.data)),]
+
+#selcet data with cabin information
+location_train<- which(is.na(train.x$CabinPos) == TRUE)
+location_test<- which(is.na(test$CabinPos) == TRUE)
+
+# model one: with cabin information
+train.x1<- train.x[-location_train,]
+train.y1<- train.y[-location_train]
+test1<- test[-location_test,]
+
+set.seed(10)
+rf1<- randomForest(train.x1, train.y1,ntree = 500, mtry = 6)
+mean(rf1$err.rate[,1])
+ 
+rfpredice1<- predict(rf1, test1)
+
+#model two: without cabin information
+feature2<- c("Pclass","Age","Sex","Fare","Parch","SibSp","Embarked")
+train.x2<- train.x[location_train,feature2]
+train.y2<- train.y[location_train]
+test2<- test[location_test,feature2]
+
+set.seed(10)
+rf2<- randomForest(train.x2, train.y2,ntree = 500, mtry = 3)
+
+rfpredice2<- predict(rf2, test2)
+mean(rf2$err.rate[,1])
+
+
 
