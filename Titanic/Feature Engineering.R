@@ -49,10 +49,12 @@ fill_in_age_by_title <- function(obs) {
 feature.data$Age <- apply(feature.data, 1, FUN=fill_in_age_by_title)
 feature.data$Age <- as.numeric(feature.data$Age)
 
+
+
 # Weik below
 
 #Select feature
-feature<- c("Pclass","Age","Sex","Fare","FamilySize","Embarked")
+feature<- c("Pclass","Age","Sex","Fare","Parch","SibSp","Embarked")
 new.data<- feature.data[,feature]
 
 #Applying RF
