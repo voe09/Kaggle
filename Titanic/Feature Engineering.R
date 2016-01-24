@@ -48,22 +48,38 @@ fill_in_age_by_title <- function(obs) {
 }
 feature.data$Age <- apply(feature.data, 1, FUN=fill_in_age_by_title)
 feature.data$Age <- as.numeric(feature.data$Age)
+#Extract Cabin Num and deck from Cabin
+feature.data$CabinNum <- sapply(feature.data$Cabin, function(x) strsplit(x, '[A-Z]')[[1]][2])
+feature.data$CabinNum <- as.numeric(feature.data$CabinNum)
+feature.data$Deck <- sapply(feature.data$Cabin, function(x) strsplit(x, '')[[1]][1])
 
-# Weik below
+#Cabin Num 1-50 as Front, 50-100 as Middle, >100 as End
+feature.data$CabinPos <- NA
+feature.data$CabinPos[feature.data$CabinNum<50]<-'Front'
+feature.data$CabinPos[feature.data$CabinNum>=50 & feature.data$CabinNum<100]<-'Middle'
+feature.data$CabinPos[feature.data$CabinNum>=100]<-'End'
+feature.data$CabinPos <- as.factor(feature.data$CabinPos)
+#If Cabin Num is odd, on the right, else, on the left
+feature.data$CabinLoc <- NA
+feature.data$CabinLoc[feature.data$CabinNum %% 2 == 0] <- 'left'
+feature.data$CabinLoc[feature.data$CabinNum %% 2 != 0] <- 'right'
+feature.data$CabinLoc <- as.factor(feature.data$CabinLoc)
 
-#Select feature
-feature<- c("Pclass","Age","Sex","Fare","FamilySize","Embarked")
-new.data<- feature.data[,feature]
-
-#Applying RF
-library(randomForest)
-
-train.y<- as.factor(train.data$Survived)
-train.x<- new.data[c(1:nrow(train.data)),]
-
-test<- new.data[-c(1:nrow(train.data)),]
-
-rf<- randomForest(train.x, train.y,ntree = 500)
-
-rfpredice<- predict(rf, test)
+# # Weik below
+# 
+# #Select feature
+# feature<- c("Pclass","Age","Sex","Fare","FamilySize","Embarked")
+# new.data<- feature.data[,feature]
+# 
+# #Applying RF
+# library(randomForest)
+# 
+# train.y<- as.factor(train.data$Survived)
+# train.x<- new.data[c(1:nrow(train.data)),]
+# 
+# test<- new.data[-c(1:nrow(train.data)),]
+# 
+# rf<- randomForest(train.x, train.y,ntree = 500)
+# 
+# rfpredice<- predict(rf, test)
 
