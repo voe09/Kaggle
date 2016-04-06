@@ -90,7 +90,7 @@ train.y1<- train.y[-location_train]
 test1<- test[-location_test,]
 
 set.seed(10)
-rf1<- randomForest(train.x1, train.y1,ntree = 500, mtry = 6)
+rf1<- randomForest(train.x1, train.y1,ntree = 10000, mtry = 8)
 mean(rf1$err.rate[,1])
  
 rfpredice1<- predict(rf1, test1)
@@ -102,10 +102,11 @@ train.y2<- train.y[location_train]
 test2<- test[location_test,feature2]
 
 set.seed(10)
-rf2<- randomForest(train.x2, train.y2,ntree = 500, mtry = 3)
+rf2<- randomForest(train.x2, train.y2,ntree = 10000, mtry = 3)
+mean(rf2$err.rate[,1])
 
 rfpredice2<- predict(rf2, test2)
-mean(rf2$err.rate[,1])
+
 
 
 
